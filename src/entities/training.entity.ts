@@ -1,5 +1,5 @@
 import { Entity, Column } from "typeorm";
-import { GlobalEntity } from "./global.entity";
+import { GlobalEntity } from "./utils/global.entity";
 import { TrainingLevels } from "./utils/entity-utils";
 
 @Entity({ name: "Training" })

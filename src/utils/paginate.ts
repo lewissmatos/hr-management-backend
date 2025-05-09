@@ -6,7 +6,7 @@ import {
 	ObjectLiteral,
 	Repository,
 } from "typeorm";
-import { GlobalEntity } from "../entities/global.entity";
+import { GlobalEntity } from "../entities/utils/global.entity";
 
 export interface PaginationOptions {
 	page: number;

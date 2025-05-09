@@ -12,3 +12,11 @@ export enum TrainingLevels {
 	TECNICO = "Técnico",
 	GESTION = "Gestión",
 }
+
+export enum Departments {
+	HR = "Recursos Humanos",
+	IT = "Tecnologías de la Información",
+	ADMINISTRATION = "Administración",
+	SALES = "Ventas",
+	PRODUCTION = "Producción",
+}

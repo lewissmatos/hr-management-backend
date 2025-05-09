@@ -4,7 +4,7 @@ import { authenticateJWT } from "../middlewares/auth.middleware";
 import { JobPositionController } from "../controllers/job-position.controller";
 
 const router = Router();
-router.use(authenticateJWT);
+// router.use(authenticateJWT);
 
 router.get("/", JobPositionController.getAll);
 router.get("/:id", JobPositionController.getOne);

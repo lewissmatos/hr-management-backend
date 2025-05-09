@@ -1,5 +1,5 @@
-import { Entity, Column, OneToMany, ManyToMany } from "typeorm";
-import { GlobalEntity } from "./global.entity";
+import { Entity, Column } from "typeorm";
+import { GlobalEntity } from "./utils/global.entity";
 import { JobPositionRiskLevels } from "./utils/entity-utils";
 import { Language } from "./language.entity";
 
@@ -15,6 +15,4 @@ export class JobPosition extends GlobalEntity {
 	maxSalary: number = 0;
 	@Column()
 	isActive: boolean = true;
-	@ManyToMany(() => Language, (x) => x.id)
-	requiredLanguages!: Language[];
 }

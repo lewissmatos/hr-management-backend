@@ -1,5 +1,5 @@
-import { Entity, Column, OneToOne, JoinColumn, ManyToOne } from "typeorm";
-import { GlobalEntity } from "./global.entity";
+import { Entity, Column, OneToOne, ManyToOne } from "typeorm";
+import { GlobalEntity } from "./utils/global.entity";
 import { JobPosition } from "./job-position.entity";
 import { Candidate } from "./candidate.entity";
 
@@ -11,18 +11,14 @@ export class Employee extends GlobalEntity {
 	name: string = "";
 	@Column()
 	startDate: Date = new Date();
-	@ManyToOne(() => JobPosition, (x) => x.id, {
-		cascade: true,
-	})
-	@JoinColumn()
+	@ManyToOne(() => JobPosition, (x) => x.id)
 	jobPosition!: JobPosition;
 	@Column()
 	department: string = "";
 	@Column()
 	salary: number = 0.0;
 	@OneToOne(() => Candidate, (x) => x.id, {
-		cascade: true,
+		nullable: true,
 	})
-	@JoinColumn()
 	candidateBackground!: Candidate;
 }

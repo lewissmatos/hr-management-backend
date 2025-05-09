@@ -1,5 +1,5 @@
 import { Entity, Column, JoinColumn, ManyToOne } from "typeorm";
-import { GlobalEntity } from "./global.entity";
+import { GlobalEntity } from "./utils/global.entity";
 import { JobPosition } from "./job-position.entity";
 
 @Entity({ name: "WorkExperience" })
