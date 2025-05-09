@@ -8,4 +8,6 @@ export class User extends GlobalEntity {
 	employeeData!: Employee;
 	@Column()
 	password: string = "";
+	@Column()
+	isActive: boolean = true;
 }

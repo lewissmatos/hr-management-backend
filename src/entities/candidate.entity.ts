@@ -37,4 +37,6 @@ export class Candidate extends GlobalEntity {
 	recommendedBy!: Employee;
 	@ManyToMany(() => Language, (x) => x.id)
 	spokenLanguages!: Language[];
+	@Column()
+	isActive: boolean = true;
 }

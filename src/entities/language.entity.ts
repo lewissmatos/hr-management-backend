@@ -3,6 +3,6 @@ import { GlobalEntity } from "./global.entity";
 
 @Entity({ name: "Language" })
 export class Language extends GlobalEntity {
-	@Column()
+	@Column({ unique: true })
 	name: string = "";
 }

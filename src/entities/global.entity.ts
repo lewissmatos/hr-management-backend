@@ -5,7 +5,5 @@ export class GlobalEntity {
 	@PrimaryGeneratedColumn()
 	id: number = 0;
 	@Column()
-	isActive: boolean = true;
-	@Column()
 	createdAt: Date = new Date();
 }
