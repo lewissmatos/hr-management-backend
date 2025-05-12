@@ -3,10 +3,13 @@ import express from "express";
 import cors from "cors";
 import { AppDataSource } from "./db-source";
 import { config } from "dotenv";
-import proficiencyRouter from "./routes/proficiency.routes";
 import authRouter from "./routes/auth.routes";
 import languageRouter from "./routes/language.routes";
+import candidateRouter from "./routes/candidate.routes";
+import employeeRouter from "./routes/employee.routes";
 import jobPositionRouter from "./routes/job-position.routes";
+import proficiencyRouter from "./routes/proficiency.routes";
+import trainingRouter from "./routes/training.routes";
 
 config();
 
@@ -22,10 +25,13 @@ app.use(
 );
 
 // Routes
-app.use("/api/proficiencies", proficiencyRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/languages", languageRouter);
+app.use("/api/candidates", candidateRouter);
+app.use("/api/employees", employeeRouter);
 app.use("/api/job-positions", jobPositionRouter);
+app.use("/api/languages", languageRouter);
+app.use("/api/proficiencies", proficiencyRouter);
+app.use("/api/trainings", trainingRouter);
 
 AppDataSource.initialize()
 	.then(() => {

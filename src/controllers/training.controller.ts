@@ -12,7 +12,7 @@ export class TrainingController {
 		});
 		res.json(
 			createResponse(
-				"Proficiencies fetched successfully",
+				"Capacitaciones obtenidas exitosamente",
 				200,
 				paginatedResponse.data,
 				{
@@ -27,18 +27,22 @@ export class TrainingController {
 	static async getOne(req: Request, res: Response) {
 		try {
 			const data = await TrainingService.getOne(Number(req.params.id));
-			res.json(createResponse("Training found", 200, data));
+			res.json(createResponse("Capacitación encontrada", 200, data));
 		} catch (e: any) {
-			res.status(404).json(createResponse(e.message || "Not found", 404));
+			res.status(404).json(createResponse(e.message || "No encontrada", 404));
 		}
 	}
 
 	static async create(req: Request, res: Response) {
 		try {
 			const data = await TrainingService.create(req.body);
-			res.status(201).json(createResponse("Training created", 201, data));
+			res
+				.status(201)
+				.json(createResponse("Capacitación creada exitosamente", 201, data));
 		} catch (e: any) {
-			res.status(400).json(createResponse(e.message || "Bad request", 400));
+			res
+				.status(400)
+				.json(createResponse(e.message || "Solicitud incorrecta", 400));
 		}
 	}
 
@@ -48,18 +52,24 @@ export class TrainingController {
 				Number(req.params.id),
 				req.body
 			);
-			res.json(createResponse("Training updated", 200, data));
+			res.json(
+				createResponse("Capacitación actualizada exitosamente", 200, data)
+			);
 		} catch (e: any) {
-			res.status(400).json(createResponse(e.message || "Bad request", 400));
+			res
+				.status(400)
+				.json(createResponse(e.message || "Solicitud incorrecta", 400));
 		}
 	}
 
 	static async disable(req: Request, res: Response) {
 		try {
 			const data = await TrainingService.disable(Number(req.params.id));
-			res.json(createResponse("Training deleted", 200, data));
+			res.json(
+				createResponse("Capacitación desactivada exitosamente", 200, data)
+			);
 		} catch (e: any) {
-			res.status(404).json(createResponse(e.message || "Not found", 404));
+			res.status(404).json(createResponse(e.message || "No encontrada", 404));
 		}
 	}
 }
