@@ -19,20 +19,20 @@ export class EmployeeService {
 
 	static async getOne(id: number) {
 		const employee = await repo.findOneBy({ id });
-		if (!employee) throw new Error("Employee not found");
+		if (!employee) throw new Error("Empleado no encontrado");
 		return employee;
 	}
 
 	static async create(data: Partial<Employee>) {
 		const exists = await repo.findOneBy({ cedula: data.cedula });
-		if (exists) throw new Error("Employee already exists");
+		if (exists) throw new Error("El empleado ya existe");
 		const employee = repo.create(data);
 		return await repo.save(employee);
 	}
 
 	static async update(id: number, data: Partial<Employee>) {
 		const employee = await this.getOne(id);
-		if (!employee) throw new Error("Employee not found");
+		if (!employee) throw new Error("Empleado no encontrado");
 
 		Object.assign(employee, data);
 		return await repo.save(employee);

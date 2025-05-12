@@ -23,7 +23,7 @@ export class JobPositionService {
 		const jobPosition = await AppDataSource.getRepository(
 			JobPosition
 		).findOneBy({ id });
-		if (!jobPosition) throw new Error("Job position not found");
+		if (!jobPosition) throw new Error("Puesto de trabajo no encontrado");
 		return jobPosition;
 	}
 
@@ -31,13 +31,13 @@ export class JobPositionService {
 		const exists = await AppDataSource.getRepository(JobPosition).findOneBy({
 			name: data.name,
 		});
-		if (exists) throw new Error("Job position already exists");
+		if (exists) throw new Error("El puesto de trabajo ya existe");
 		let riskLevels = Object.values(JobPositionRiskLevels);
 
 		if (
 			!riskLevels.includes(data.riskLevel!.toString() as JobPositionRiskLevels)
 		) {
-			throw new Error("Invalid risk level");
+			throw new Error("Nivel de riesgo inválido");
 		}
 		const jobPosition = AppDataSource.getRepository(JobPosition).create(data);
 		return await AppDataSource.getRepository(JobPosition).save(jobPosition);
@@ -45,7 +45,7 @@ export class JobPositionService {
 
 	static async update(id: number, data: Partial<JobPosition>) {
 		const jobPosition = await this.getOne(id);
-		if (!jobPosition) throw new Error("Job position not found");
+		if (!jobPosition) throw new Error("Puesto de trabajo no encontrado");
 
 		await AppDataSource.getRepository(JobPosition).update(id, data);
 		return { ...jobPosition, ...data };
@@ -53,11 +53,11 @@ export class JobPositionService {
 
 	static async disable(id: number) {
 		const jobPosition = await this.getOne(id);
-		if (!jobPosition) throw new Error("Job position not found");
+		if (!jobPosition) throw new Error("Puesto de trabajo no encontrado");
 
 		await AppDataSource.getRepository(JobPosition).update(id, {
-			isActive: false,
+			isAvailable: false,
 		});
-		return { ...jobPosition, isActive: false };
+		return { ...jobPosition, isAvailable: false };
 	}
 }

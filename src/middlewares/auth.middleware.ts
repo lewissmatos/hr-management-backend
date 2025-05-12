@@ -19,11 +19,11 @@ export const authenticateJWT = (
 			(req as any).user = decoded;
 			next();
 		} catch (err) {
-			res.status(403).json({ message: "Invalid or expired token" });
+			res.status(403).json({ message: "Token invalido" });
 			return;
 		}
 	} else {
-		res.status(401).json({ message: "Authorization header missing" });
+		res.status(401).json({ message: "Header 'Authorization' no enviado" });
 		return;
 	}
 };

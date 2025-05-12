@@ -22,13 +22,13 @@ export class CandidateService {
 
 	static async getOne(id: number) {
 		const candidate = await repo.findOneBy({ id });
-		if (!candidate) throw new Error("Candidate not found");
+		if (!candidate) throw new Error("Candidato no encontrado");
 		return candidate;
 	}
 
 	static async update(id: number, data: Partial<Candidate>) {
 		const candidate = await this.getOne(id);
-		if (!candidate) throw new Error("Candidate not found");
+		if (!candidate) throw new Error("Candidato no encontrado");
 
 		Object.assign(candidate, data);
 		return await repo.save(candidate);
@@ -36,7 +36,7 @@ export class CandidateService {
 
 	static async makeEmployee(id: number) {
 		const candidate = await this.getOne(id);
-		if (!candidate) throw new Error("Candidate not found");
+		if (!candidate) throw new Error("Candidato no encontrado");
 
 		await repo.update(id, {
 			isEmployee: true,

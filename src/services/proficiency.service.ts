@@ -13,13 +13,13 @@ export class ProficiencyService {
 
 	static async getOne(id: number) {
 		const proficiency = await repo.findOneBy({ id });
-		if (!proficiency) throw new Error("Proficiency not found");
+		if (!proficiency) throw new Error("Competencia no encontrada");
 		return proficiency;
 	}
 
 	static async create(data: Partial<Proficiency>) {
 		const exists = await repo.findOneBy({ description: data.description });
-		if (exists) throw new Error("Proficiency already exists");
+		if (exists) throw new Error("La competencia ya existe");
 
 		const proficiency = repo.create(data);
 		return await repo.save(proficiency);
@@ -27,7 +27,7 @@ export class ProficiencyService {
 
 	static async update(id: number, data: Partial<Proficiency>) {
 		const proficiency = await repo.findOneBy({ id });
-		if (!proficiency) throw new Error("Not found");
+		if (!proficiency) throw new Error("No encontrado");
 
 		Object.assign(proficiency, data);
 		return await repo.save(proficiency);
@@ -37,9 +37,9 @@ export class ProficiencyService {
 		const proficiency = await repo.findOneBy({
 			id,
 		});
-		if (!proficiency) throw new Error("Proficiency not found");
+		if (!proficiency) throw new Error("Competencia no encontrada");
 		const result = await repo.update(id, { isActive: !proficiency.isActive });
-		if (result.affected === 0) throw new Error("Delete failed");
-		return { message: "Deleted successfully" };
+		if (result.affected === 0) throw new Error("Error al eliminar");
+		return { message: "Actualizado con éxito" };
 	}
 }

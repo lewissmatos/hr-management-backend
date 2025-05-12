@@ -11,7 +11,7 @@ export class AuthService {
 		const repo = AppDataSource.getRepository(User);
 
 		const existing = await repo.findOneBy({ username });
-		if (existing) throw new Error("User already exists");
+		if (existing) throw new Error("El usuario ya existe");
 
 		const hashedPass = await bcrypt.hash(password, 10);
 		const user = repo.create({ username, password: hashedPass });
@@ -25,7 +25,7 @@ export class AuthService {
 		const user = await repo.findOneBy({ username });
 
 		if (!user || !(await bcrypt.compare(password, user.password))) {
-			throw new Error("Invalid credentials");
+			throw new Error("Credenciales inválidas");
 		}
 
 		const token = jwt.sign(
