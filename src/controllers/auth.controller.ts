@@ -8,11 +8,9 @@ export class AuthController {
 		const { cedula, password } = req.body;
 		try {
 			const data = await AuthService.login(cedula, password);
-			res.json(createResponse(data, "Login successful", 200));
+			res.json(createResponse("Login successful", 200, data));
 		} catch (e: any) {
-			res
-				.status(400)
-				.json(createResponse(null, e.message || "Unauthorized", 400));
+			res.status(400).json(createResponse(e.message || "Unauthorized", 400));
 		}
 	}
 	static async register(req: Request, res: Response) {
@@ -21,11 +19,9 @@ export class AuthController {
 			const data = await AuthService.register(username, password);
 			res
 				.status(201)
-				.json(createResponse(data, "User created successfully", 201));
+				.json(createResponse("User created successfully", 201, data));
 		} catch (e: any) {
-			res
-				.status(400)
-				.json(createResponse(null, e.message || "Bad request", 400));
+			res.status(400).json(createResponse(e.message || "Bad request", 400));
 		}
 	}
 }

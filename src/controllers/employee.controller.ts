@@ -6,11 +6,17 @@ export class EmployeeController {
 	static async getAll(req: Request, res: Response) {
 		try {
 			const { page, limit } = req.query;
-			const data = await EmployeeService.getAll({
+			const paginatedRes = await EmployeeService.getAll({
 				page: Number(page),
 				limit: Number(limit),
 			});
-			res.json(createResponse(data, "Employee found", 200));
+			res.json(
+				createResponse("Employee found", 200, paginatedRes.data, {
+					page: paginatedRes.page,
+					limit: paginatedRes.limit,
+					total: paginatedRes.total,
+				})
+			);
 		} catch (error: any) {
 			res.status(500).json({ message: error.message });
 		}
@@ -19,7 +25,7 @@ export class EmployeeController {
 	static async getOne(req: Request, res: Response) {
 		try {
 			const data = await EmployeeService.getOne(Number(req.params.id));
-			res.json(createResponse(data, "Employee found", 200));
+			res.json(createResponse("Employee found", 200, data));
 		} catch (error: any) {
 			res.status(404).json({ message: error.message });
 		}
@@ -28,7 +34,7 @@ export class EmployeeController {
 	static async create(req: Request, res: Response) {
 		try {
 			const data = await EmployeeService.create(req.body);
-			res.json(createResponse(data, "Employee created", 201));
+			res.json(createResponse("Employee created", 201, data));
 		} catch (error: any) {
 			res.status(400).json({ message: error.message });
 		}
@@ -40,7 +46,7 @@ export class EmployeeController {
 				Number(req.params.id),
 				req.body
 			);
-			res.json(createResponse(data, "Employee updated", 200));
+			res.json(createResponse("Employee updated", 200, data));
 		} catch (error: any) {
 			res.status(400).json({ message: error.message });
 		}

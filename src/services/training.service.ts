@@ -1,12 +1,23 @@
 import { AppDataSource } from "../db-source";
 import { Training } from "../entities/training.entity";
 import { TrainingLevels } from "../entities/utils/entity-utils";
+import { paginate, PaginationOptions } from "../utils/paginate";
 
 const repo = AppDataSource.getRepository(Training);
 
 export class TrainingService {
-	static async getAll() {
-		return await repo.find();
+	static async getAll(filters: Partial<Training> & PaginationOptions) {
+		const { page, limit, ...rest } = filters;
+		return await paginate(
+			repo,
+			{ page, limit },
+			{
+				where: {
+					...rest,
+				},
+				order: { name: "ASC" },
+			}
+		);
 	}
 
 	static async getOne(id: number) {

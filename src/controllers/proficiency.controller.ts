@@ -5,27 +5,40 @@ import { createResponse } from "../utils/responseModel";
 
 export class ProficiencyController {
 	static async getAll(req: Request, res: Response) {
-		const data = await ProficiencyService.getAll();
-		res.json(createResponse(data, "Proficiencies fetched successfully", 200));
+		const { page, limit } = req.query;
+		const paginatedRes = await ProficiencyService.getAll({
+			page: Number(page),
+			limit: Number(limit),
+		});
+		res.json(
+			createResponse(
+				"Proficiencies fetched successfully",
+				200,
+				paginatedRes.data,
+				{
+					page: paginatedRes.page,
+					limit: paginatedRes.limit,
+					total: paginatedRes.total,
+				}
+			)
+		);
 	}
 
 	static async getOne(req: Request, res: Response) {
 		try {
 			const data = await ProficiencyService.getOne(Number(req.params.id));
-			res.json(createResponse(data, "Proficiency found", 200));
+			res.json(createResponse("Proficiency found", 200, data));
 		} catch (e: any) {
-			res.status(404).json(createResponse(null, e.message || "Not found", 404));
+			res.status(404).json(createResponse(e.message || "Not found", 404));
 		}
 	}
 
 	static async create(req: Request, res: Response) {
 		try {
 			const data = await ProficiencyService.create(req.body);
-			res.status(201).json(createResponse(data, "Proficiency created", 201));
+			res.status(201).json(createResponse("Proficiency created", 201, data));
 		} catch (e: any) {
-			res
-				.status(400)
-				.json(createResponse(null, e.message || "Bad request", 400));
+			res.status(400).json(createResponse(e.message || "Bad request", 400));
 		}
 	}
 
@@ -35,20 +48,18 @@ export class ProficiencyController {
 				Number(req.params.id),
 				req.body
 			);
-			res.json(createResponse(data, "Proficiency updated", 200));
+			res.json(createResponse("Proficiency updated", 200, data));
 		} catch (e: any) {
-			res
-				.status(400)
-				.json(createResponse(null, e.message || "Bad request", 400));
+			res.status(400).json(createResponse(e.message || "Bad request", 400));
 		}
 	}
 
 	static async toggleStatus(req: Request, res: Response) {
 		try {
 			const data = await ProficiencyService.toggleStatus(Number(req.params.id));
-			res.json(createResponse(data, "Proficiency deleted", 200));
+			res.json(createResponse("Proficiency deleted", 200, data));
 		} catch (e: any) {
-			res.status(404).json(createResponse(null, e.message || "Not found", 404));
+			res.status(404).json(createResponse(e.message || "Not found", 404));
 		}
 	}
 }

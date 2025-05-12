@@ -9,5 +9,6 @@ router.use(authenticateJWT);
 router.get("/", LanguageController.getAll);
 router.get("/:id", LanguageController.getOne);
 router.post("/", LanguageController.create);
+router.put("/:id", LanguageController.update);
 
 export default router;

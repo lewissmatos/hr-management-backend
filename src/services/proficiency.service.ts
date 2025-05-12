@@ -1,12 +1,13 @@
 import { AppDataSource } from "../db-source";
 import { Proficiency } from "../entities/proficiency.entity";
+import { paginate, PaginationOptions } from "../utils/paginate";
 
 const repo = AppDataSource.getRepository(Proficiency);
 
 export class ProficiencyService {
-	static async getAll() {
-		return await repo.find({
-			order: { id: "ASC" },
+	static async getAll(pagination: PaginationOptions) {
+		return await paginate(repo, pagination, {
+			order: { description: "ASC" },
 		});
 	}
 

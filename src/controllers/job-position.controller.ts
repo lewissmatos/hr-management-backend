@@ -6,38 +6,52 @@ export class JobPositionController {
 	static async getAll(req: Request, res: Response) {
 		try {
 			const { page, limit } = req.query;
-			const data = await JobPositionService.getAll({
+			const paginatedRes = await JobPositionService.getAll({
 				page: Number(page),
 				limit: Number(limit),
 			});
 			res.json(
-				createResponse(data, "Job positions retrieved successfully", 200)
+				createResponse(
+					"Job positions retrieved successfully",
+					200,
+					paginatedRes.data,
+					{
+						page: paginatedRes.page,
+						limit: paginatedRes.limit,
+						total: paginatedRes.total,
+					}
+				)
 			);
 		} catch (e: any) {
 			res
 				.status(500)
-				.json(createResponse(null, e.message || "Internal server error", 500));
+				.json(createResponse(e.message || "Internal server error", 500));
 		}
 	}
 
 	static async getAvailable(req: Request, res: Response) {
 		try {
 			const { page, limit } = req.query;
-			const data = await JobPositionService.getAvailable({
+			const paginatedRes = await JobPositionService.getAvailable({
 				page: Number(page),
 				limit: Number(limit),
 			});
 			res.json(
 				createResponse(
-					data,
 					"Available job positions retrieved successfully",
-					200
+					200,
+					paginatedRes.data,
+					{
+						page: paginatedRes.page,
+						limit: paginatedRes.limit,
+						total: paginatedRes.total,
+					}
 				)
 			);
 		} catch (e: any) {
 			res
 				.status(500)
-				.json(createResponse(null, e.message || "Internal server error", 500));
+				.json(createResponse(e.message || "Internal server error", 500));
 		}
 	}
 	static async getOne(req: Request, res: Response) {
@@ -45,12 +59,12 @@ export class JobPositionController {
 		try {
 			const data = await JobPositionService.getOne(Number(id));
 			res.json(
-				createResponse(data, "Job position retrieved successfully", 200)
+				createResponse("Job position retrieved successfully", 200, data)
 			);
 		} catch (e: any) {
 			res
 				.status(404)
-				.json(createResponse(null, e.message || "Job position not found", 404));
+				.json(createResponse(e.message || "Job position not found", 404));
 		}
 	}
 	static async create(req: Request, res: Response) {
@@ -58,33 +72,31 @@ export class JobPositionController {
 			const data = await JobPositionService.create(req.body);
 			res
 				.status(201)
-				.json(createResponse(data, "Job position created successfully", 201));
+				.json(createResponse("Job position created successfully", 201, data));
 		} catch (e: any) {
-			res
-				.status(400)
-				.json(createResponse(null, e.message || "Bad request", 400));
+			res.status(400).json(createResponse(e.message || "Bad request", 400));
 		}
 	}
 	static async update(req: Request, res: Response) {
 		const { id } = req.params;
 		try {
 			const data = await JobPositionService.update(Number(id), req.body);
-			res.json(createResponse(data, "Job position updated successfully", 200));
+			res.json(createResponse("Job position updated successfully", 200, data));
 		} catch (e: any) {
 			res
 				.status(404)
-				.json(createResponse(null, e.message || "Job position not found", 404));
+				.json(createResponse(e.message || "Job position not found", 404));
 		}
 	}
 	static async disable(req: Request, res: Response) {
 		const { id } = req.params;
 		try {
 			await JobPositionService.disable(Number(id));
-			res.json(createResponse(null, "Job position deleted successfully", 200));
+			res.json(createResponse("Job position deleted successfully", 200));
 		} catch (e: any) {
 			res
 				.status(404)
-				.json(createResponse(null, e.message || "Job position not found", 404));
+				.json(createResponse(e.message || "Job position not found", 404));
 		}
 	}
 }

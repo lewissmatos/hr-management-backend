@@ -6,13 +6,17 @@ import { JobPositionRiskLevels } from "../entities/utils/entity-utils";
 const repo = AppDataSource.getRepository(JobPosition);
 export class JobPositionService {
 	static async getAll(pagination: PaginationOptions) {
-		return await paginate(repo, pagination, {}, ["requiredLanguages"]);
+		return await paginate(repo, pagination, {
+			relations: ["requiredLanguages"],
+			order: { name: "ASC" },
+		});
 	}
 
 	static async getAvailable(pagination: PaginationOptions) {
-		return await paginate(repo, pagination, { isAvailable: true }, [
-			"requiredLanguages",
-		]);
+		return await paginate(repo, pagination, {
+			relations: ["requiredLanguages"],
+			order: { name: "ASC" },
+		});
 	}
 
 	static async getOne(id: number) {

@@ -1,11 +1,5 @@
 // src/utils/paginate.ts
-import {
-	FindOneOptions,
-	FindOptions,
-	FindOptionsWhere,
-	ObjectLiteral,
-	Repository,
-} from "typeorm";
+import { FindOptionsOrder, FindOptionsWhere, Repository } from "typeorm";
 import { GlobalEntity } from "../entities/utils/global.entity";
 
 export interface PaginationOptions {
@@ -14,7 +8,6 @@ export interface PaginationOptions {
 }
 
 export interface PaginationResult<T> {
-	data: T[];
 	total: number;
 	page: number;
 	limit: number;
@@ -22,19 +15,23 @@ export interface PaginationResult<T> {
 
 export async function paginate<T extends GlobalEntity>(
 	repo: Repository<T>,
-	pagination: PaginationOptions,
-	where: FindOptionsWhere<T> | FindOptionsWhere<T>[] = {},
-	relations: string[] = []
-): Promise<PaginationResult<T>> {
-	const page = pagination.page && pagination.page > 0 ? pagination.page : 1;
+	pagination?: PaginationOptions,
+	more?: {
+		relations?: string[];
+		where?: FindOptionsWhere<T>;
+		order?: FindOptionsOrder<T>;
+	}
+): Promise<PaginationResult<T> & { data: T[] }> {
+	const page = pagination?.page && pagination.page > 0 ? pagination.page : 1;
 	const limit =
-		pagination.limit && pagination.limit > 0 ? pagination.limit : 10;
+		pagination?.limit && pagination.limit > 0 ? pagination.limit : 50;
 
 	const [data, total] = await repo.findAndCount({
 		skip: (page - 1) * limit,
 		take: limit,
-		where,
-		relations,
+		where: more?.where,
+		relations: more?.relations,
+		order: more?.order || ({ id: "ASC" } as FindOptionsOrder<T>),
 	});
 
 	return {

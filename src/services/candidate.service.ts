@@ -8,13 +8,16 @@ const repo = AppDataSource.getRepository(Candidate);
 
 export class CandidateService {
 	static async getAll(pagination: PaginationOptions) {
-		return await paginate(repo, pagination, {}, [
-			"applyingJobPosition",
-			"proficiencies",
-			"workExperiences",
-			"recommendedBy",
-			"spokenLanguages",
-		]);
+		return await paginate(repo, pagination, {
+			relations: [
+				"applyingJobPosition",
+				"proficiencies",
+				"workExperiences",
+				"recommendedBy",
+				"spokenLanguages",
+			],
+			order: { name: "ASC" },
+		});
 	}
 
 	static async getOne(id: number) {

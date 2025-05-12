@@ -5,11 +5,16 @@ import { paginate, PaginationOptions } from "../utils/paginate";
 const repo = AppDataSource.getRepository(Employee);
 
 export class EmployeeService {
-	static async getAll(pagination: PaginationOptions) {
-		return await paginate(repo, pagination, {}, [
-			"jobPosition",
-			"candidateBackground",
-		]);
+	static async getAll(filter: Partial<Employee> & PaginationOptions) {
+		const { page, limit, ...rest } = filter;
+		return await paginate(
+			repo,
+			{ page, limit },
+			{
+				relations: ["jobPosition", "candidateBackground"],
+				order: { name: "ASC" },
+			}
+		);
 	}
 
 	static async getOne(id: number) {
