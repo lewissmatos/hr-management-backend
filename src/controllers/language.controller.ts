@@ -61,4 +61,16 @@ export class LanguageController {
 			res.status(400).json(createResponse(e.message || "Bad request", 400));
 		}
 	}
+
+	static async toggleStatus(req: Request, res: Response) {
+		const { id } = req.params;
+		try {
+			await LanguageService.toggleStatus(Number(id));
+			res.json(createResponse("Language status toggled successfully", 200));
+		} catch (e: any) {
+			res
+				.status(404)
+				.json(createResponse(e.message || "Language not found", 404));
+		}
+	}
 }

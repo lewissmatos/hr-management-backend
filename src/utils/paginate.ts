@@ -1,6 +1,7 @@
 // src/utils/paginate.ts
 import { FindOptionsOrder, FindOptionsWhere, Repository } from "typeorm";
 import { GlobalEntity } from "../entities/utils/global.entity";
+import { User } from "../entities/user.entity";
 
 export interface PaginationOptions {
 	page: number;
@@ -23,6 +24,7 @@ export async function paginate<T extends GlobalEntity>(
 	}
 ): Promise<PaginationResult<T> & { data: T[] }> {
 	const page = pagination?.page && pagination.page > 0 ? pagination.page : 1;
+
 	const limit =
 		pagination?.limit && pagination.limit > 0 ? pagination.limit : 50;
 

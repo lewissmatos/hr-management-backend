@@ -4,9 +4,8 @@ import { ProficiencyController } from "../controllers/proficiency.controller";
 import { authenticateJWT } from "../middlewares/auth.middleware";
 
 const router = Router();
-router.use(authenticateJWT);
-
 router.get("/", ProficiencyController.getAll);
+router.use(authenticateJWT);
 router.get("/:id", ProficiencyController.getOne);
 router.post("/", ProficiencyController.create);
 router.put("/:id", ProficiencyController.update);
