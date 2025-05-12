@@ -11,4 +11,6 @@ export class GlobalEntity {
 	id: number = 0;
 	@CreateDateColumn({ default: () => "CURRENT_TIMESTAMP" })
 	createdAt!: Date;
+	@Column({ default: true })
+	isActive: boolean = true;
 }

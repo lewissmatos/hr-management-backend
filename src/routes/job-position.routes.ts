@@ -10,6 +10,6 @@ router.get("/", JobPositionController.getAll);
 router.get("/:id", JobPositionController.getOne);
 router.post("/", JobPositionController.create);
 router.put("/:id", JobPositionController.update);
-router.delete("/:id", JobPositionController.delete);
+router.put("/:id/disable", JobPositionController.disable);
 
 export default router;

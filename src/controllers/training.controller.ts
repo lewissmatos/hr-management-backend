@@ -42,4 +42,13 @@ export class TrainingController {
 				.json(createResponse(null, e.message || "Bad request", 400));
 		}
 	}
+
+	static async disable(req: Request, res: Response) {
+		try {
+			const data = await TrainingService.disable(Number(req.params.id));
+			res.json(createResponse(data, "Training deleted", 200));
+		} catch (e: any) {
+			res.status(404).json(createResponse(null, e.message || "Not found", 404));
+		}
+	}
 }

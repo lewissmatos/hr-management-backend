@@ -10,6 +10,6 @@ router.get("/", ProficiencyController.getAll);
 router.get("/:id", ProficiencyController.getOne);
 router.post("/", ProficiencyController.create);
 router.put("/:id", ProficiencyController.update);
-router.delete("/:id", ProficiencyController.delete);
+router.patch("/:id/toggle-status", ProficiencyController.toggleStatus);
 
 export default router;

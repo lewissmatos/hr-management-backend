@@ -43,9 +43,9 @@ export class ProficiencyController {
 		}
 	}
 
-	static async delete(req: Request, res: Response) {
+	static async toggleStatus(req: Request, res: Response) {
 		try {
-			const data = await ProficiencyService.delete(Number(req.params.id));
+			const data = await ProficiencyService.toggleStatus(Number(req.params.id));
 			res.json(createResponse(data, "Proficiency deleted", 200));
 		} catch (e: any) {
 			res.status(404).json(createResponse(null, e.message || "Not found", 404));

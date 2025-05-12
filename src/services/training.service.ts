@@ -35,4 +35,10 @@ export class TrainingService {
 		Object.assign(training, data);
 		return await repo.save(training);
 	}
+
+	static async disable(id: number) {
+		const result = await repo.update(id, { isActive: false });
+		if (result.affected === 0) throw new Error("Disable failed");
+		return { message: "Disable successfully" };
+	}
 }

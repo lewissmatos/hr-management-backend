@@ -10,5 +10,6 @@ router.get("/", TrainingController.getAll);
 router.get("/:id", TrainingController.getOne);
 router.post("/", TrainingController.create);
 router.put("/:id", TrainingController.update);
+router.put("/:id/disable", TrainingController.disable); // TODO: Make this in all routes/controllers/services
 
 export default router;

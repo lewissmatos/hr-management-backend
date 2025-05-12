@@ -33,7 +33,6 @@ export async function paginate<T extends GlobalEntity>(
 	const [data, total] = await repo.findAndCount({
 		skip: (page - 1) * limit,
 		take: limit,
-		order: { id: "ASC" } as any,
 		where,
 		relations,
 	});

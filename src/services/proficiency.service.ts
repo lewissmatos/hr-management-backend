@@ -5,7 +5,9 @@ const repo = AppDataSource.getRepository(Proficiency);
 
 export class ProficiencyService {
 	static async getAll() {
-		return await repo.find();
+		return await repo.find({
+			order: { id: "ASC" },
+		});
 	}
 
 	static async getOne(id: number) {
@@ -30,8 +32,12 @@ export class ProficiencyService {
 		return await repo.save(proficiency);
 	}
 
-	static async delete(id: number) {
-		const result = await repo.delete(id);
+	static async toggleStatus(id: number) {
+		const proficiency = await repo.findOneBy({
+			id,
+		});
+		if (!proficiency) throw new Error("Proficiency not found");
+		const result = await repo.update(id, { isActive: !proficiency.isActive });
 		if (result.affected === 0) throw new Error("Delete failed");
 		return { message: "Deleted successfully" };
 	}

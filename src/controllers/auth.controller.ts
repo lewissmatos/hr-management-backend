@@ -11,14 +11,14 @@ export class AuthController {
 			res.json(createResponse(data, "Login successful", 200));
 		} catch (e: any) {
 			res
-				.status(401)
-				.json(createResponse(null, e.message || "Unauthorized", 401));
+				.status(400)
+				.json(createResponse(null, e.message || "Unauthorized", 400));
 		}
 	}
 	static async register(req: Request, res: Response) {
-		const { cedula, password } = req.body;
+		const { username, password } = req.body;
 		try {
-			const data = await AuthService.register(cedula, password);
+			const data = await AuthService.register(username, password);
 			res
 				.status(201)
 				.json(createResponse(data, "User created successfully", 201));

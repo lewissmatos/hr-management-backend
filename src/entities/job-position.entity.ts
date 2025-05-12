@@ -13,6 +13,6 @@ export class JobPosition extends GlobalEntity {
 	minSalary: number = 0.0;
 	@Column({ type: "float", default: 0.0 })
 	maxSalary: number = 0;
-	@Column()
-	isActive: boolean = true;
+	@Column({ default: true, nullable: true })
+	isAvailable: boolean = true;
 }

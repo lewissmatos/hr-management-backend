@@ -19,6 +19,27 @@ export class JobPositionController {
 				.json(createResponse(null, e.message || "Internal server error", 500));
 		}
 	}
+
+	static async getAvailable(req: Request, res: Response) {
+		try {
+			const { page, limit } = req.query;
+			const data = await JobPositionService.getAvailable({
+				page: Number(page),
+				limit: Number(limit),
+			});
+			res.json(
+				createResponse(
+					data,
+					"Available job positions retrieved successfully",
+					200
+				)
+			);
+		} catch (e: any) {
+			res
+				.status(500)
+				.json(createResponse(null, e.message || "Internal server error", 500));
+		}
+	}
 	static async getOne(req: Request, res: Response) {
 		const { id } = req.params;
 		try {
@@ -55,10 +76,10 @@ export class JobPositionController {
 				.json(createResponse(null, e.message || "Job position not found", 404));
 		}
 	}
-	static async delete(req: Request, res: Response) {
+	static async disable(req: Request, res: Response) {
 		const { id } = req.params;
 		try {
-			await JobPositionService.delete(Number(id));
+			await JobPositionService.disable(Number(id));
 			res.json(createResponse(null, "Job position deleted successfully", 200));
 		} catch (e: any) {
 			res

@@ -9,8 +9,10 @@ export class JobPositionService {
 		return await paginate(repo, pagination, {}, ["requiredLanguages"]);
 	}
 
-	static async getAllActive(pagination: PaginationOptions) {
-		return await paginate(repo, pagination, { isActive: true });
+	static async getAvailable(pagination: PaginationOptions) {
+		return await paginate(repo, pagination, { isAvailable: true }, [
+			"requiredLanguages",
+		]);
 	}
 
 	static async getOne(id: number) {
@@ -43,14 +45,6 @@ export class JobPositionService {
 
 		await AppDataSource.getRepository(JobPosition).update(id, data);
 		return { ...jobPosition, ...data };
-	}
-
-	static async delete(id: number) {
-		const jobPosition = await this.getOne(id);
-		if (!jobPosition) throw new Error("Job position not found");
-
-		await AppDataSource.getRepository(JobPosition).delete(id);
-		return jobPosition;
 	}
 
 	static async disable(id: number) {
