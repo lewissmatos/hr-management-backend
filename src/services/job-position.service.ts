@@ -7,14 +7,12 @@ const repo = AppDataSource.getRepository(JobPosition);
 export class JobPositionService {
 	static async getAll(pagination: PaginationOptions) {
 		return await paginate(repo, pagination, {
-			relations: ["requiredLanguages"],
 			order: { name: "ASC" },
 		});
 	}
 
 	static async getAvailable(pagination: PaginationOptions) {
 		return await paginate(repo, pagination, {
-			relations: ["requiredLanguages"],
 			order: { name: "ASC" },
 		});
 	}
@@ -51,12 +49,12 @@ export class JobPositionService {
 		return { ...jobPosition, ...data };
 	}
 
-	static async disable(id: number) {
+	static async toggleAvailability(id: number) {
 		const jobPosition = await this.getOne(id);
 		if (!jobPosition) throw new Error("Puesto de trabajo no encontrado");
 
 		await AppDataSource.getRepository(JobPosition).update(id, {
-			isAvailable: false,
+			isAvailable: !jobPosition.isAvailable,
 		});
 		return { ...jobPosition, isAvailable: false };
 	}

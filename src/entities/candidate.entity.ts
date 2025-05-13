@@ -1,4 +1,11 @@
-import { Entity, Column, OneToMany, ManyToMany, ManyToOne } from "typeorm";
+import {
+	Entity,
+	Column,
+	OneToMany,
+	ManyToMany,
+	ManyToOne,
+	JoinTable,
+} from "typeorm";
 import { GlobalEntity } from "./utils/global.entity";
 import { JobPosition } from "./job-position.entity";
 import { Proficiency } from "./proficiency.entity";
@@ -13,24 +20,26 @@ export class Candidate extends GlobalEntity {
 	cedula: string = "";
 	@Column()
 	name: string = "";
-	@ManyToOne(() => JobPosition, (x) => x.id)
+	@ManyToOne(() => JobPosition)
 	applyingJobPosition!: JobPosition;
-	@ManyToMany(() => Proficiency, (x) => x.id)
+	@ManyToMany(() => Proficiency)
+	@JoinTable()
 	proficiencies!: Proficiency[];
 	@Column()
 	department: string = "";
 	@Column()
 	minExpectedSalary: number = 0.0;
-	@OneToMany(() => WorkExperience, (x) => x.id)
-	@ManyToMany(() => Training, (x) => x.id)
-	trainings!: Training[];
-	workExperiencies!: WorkExperience[];
-	@ManyToOne(() => Employee, (x) => x.id)
+	@OneToMany(() => WorkExperience, (x) => x.candidate)
+	workExperiences!: WorkExperience[];
+	@ManyToOne(() => Employee)
 	recommendedBy!: Employee;
-	@ManyToMany(() => Language, (x) => x.id)
+	@ManyToMany(() => Language)
+	@JoinTable()
 	spokenLanguages!: Language[];
 	@Column()
 	isActive: boolean = true;
+	@Column()
+	password: string = "";
 	@Column()
 	isEmployee: boolean = false;
 }
