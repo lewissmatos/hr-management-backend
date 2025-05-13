@@ -1,4 +1,4 @@
-import { Entity, Column, OneToOne } from "typeorm";
+import { Entity, Column } from "typeorm";
 import { GlobalEntity } from "./utils/global.entity";
 
 @Entity({ name: "User" })

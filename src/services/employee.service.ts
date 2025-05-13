@@ -18,7 +18,10 @@ export class EmployeeService {
 	}
 
 	static async getOne(id: number) {
-		const employee = await repo.findOneBy({ id });
+		const employee = await repo.findOne({
+			where: { id },
+			relations: ["jobPosition", "candidateBackground"],
+		});
 		if (!employee) throw new Error("Empleado no encontrado");
 		return employee;
 	}
@@ -33,6 +36,20 @@ export class EmployeeService {
 	static async update(id: number, data: Partial<Employee>) {
 		const employee = await this.getOne(id);
 		if (!employee) throw new Error("Empleado no encontrado");
+
+		//Check if the cedula already exists
+		const cedulaExists = await repo.findOneBy({ cedula: data.cedula });
+		if (cedulaExists && cedulaExists.id !== id) {
+			throw new Error("La cédula ya existe");
+		}
+
+		//Check if the candidate background is already assigned
+		const candidateBackgroundExists = await repo.findOneBy({
+			candidateBackground: data.candidateBackground,
+		});
+		if (candidateBackgroundExists && candidateBackgroundExists.id !== id) {
+			throw new Error("El fondo de candidato ya está asignado");
+		}
 
 		Object.assign(employee, data);
 		return await repo.save(employee);

@@ -7,17 +7,25 @@ import { EmployeeService } from "./employee.service";
 const repo = AppDataSource.getRepository(Candidate);
 
 export class CandidateService {
-	static async getAll(pagination: PaginationOptions) {
-		return await paginate(repo, pagination, {
-			relations: [
-				"applyingJobPosition",
-				"proficiencies",
-				"workExperiences",
-				"recommendedBy",
-				"spokenLanguages",
-			],
-			order: { name: "ASC" },
-		});
+	static async getAll(filter: Partial<Candidate> & PaginationOptions) {
+		const { page, limit, ...rest } = filter;
+		return await paginate(
+			repo,
+			{ page, limit },
+			{
+				relations: [
+					"applyingJobPosition",
+					"proficiencies",
+					"workExperiences",
+					"recommendedBy",
+					"spokenLanguages",
+				],
+				order: { name: "ASC" },
+				where: {
+					...rest,
+				},
+			}
+		);
 	}
 
 	static async getOne(id: number) {

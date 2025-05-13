@@ -5,11 +5,14 @@ import { createResponse } from "../utils/responseModel";
 export class JobPositionController {
 	static async getAll(req: Request, res: Response) {
 		try {
-			const { page, limit } = req.query;
+			const { page, limit, name } = req.query;
 			const paginatedRes = await JobPositionService.getAll({
 				page: Number(page),
 				limit: Number(limit),
+				name: name ? String(name) : undefined,
 			});
+
+			console.log(name);
 			res.json(
 				createResponse(
 					"Puestos de trabajo obtenidos exitosamente",

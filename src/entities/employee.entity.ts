@@ -1,4 +1,11 @@
-import { Entity, Column, OneToOne, ManyToOne } from "typeorm";
+import {
+	Entity,
+	Column,
+	OneToOne,
+	ManyToOne,
+	JoinTable,
+	JoinColumn,
+} from "typeorm";
 import { GlobalEntity } from "./utils/global.entity";
 import { JobPosition } from "./job-position.entity";
 import { Candidate } from "./candidate.entity";
@@ -12,14 +19,13 @@ export class Employee extends GlobalEntity {
 	name: string = "";
 	@Column()
 	startDate: Date = new Date();
-	@ManyToOne(() => JobPosition, (x) => x.id)
+	@ManyToOne(() => JobPosition)
 	jobPosition!: JobPosition;
 	@Column({ enum: Departments })
 	department!: Departments;
 	@Column()
 	salary: number = 0.0;
-	@OneToOne(() => Candidate, (x) => x.id, {
-		nullable: true,
-	})
+	@OneToOne(() => Candidate, { nullable: true })
+	@JoinColumn()
 	candidateBackground!: Candidate;
 }

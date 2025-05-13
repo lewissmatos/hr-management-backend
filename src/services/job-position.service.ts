@@ -2,13 +2,22 @@ import { AppDataSource } from "../db-source";
 import { JobPosition } from "../entities/job-position.entity";
 import { paginate, PaginationOptions } from "../utils/paginate";
 import { JobPositionRiskLevels } from "../entities/utils/entity-utils";
+import { ILike } from "typeorm";
 
 const repo = AppDataSource.getRepository(JobPosition);
 export class JobPositionService {
-	static async getAll(pagination: PaginationOptions) {
-		return await paginate(repo, pagination, {
-			order: { name: "ASC" },
-		});
+	static async getAll(filter: Partial<JobPosition> & PaginationOptions) {
+		const { page, limit, name } = filter;
+		return await paginate(
+			repo,
+			{ page, limit },
+			{
+				where: {
+					...(name ? { name: ILike(`%${name}%`) } : {}),
+				},
+				order: { name: "ASC" },
+			}
+		);
 	}
 
 	static async getAvailable(pagination: PaginationOptions) {
