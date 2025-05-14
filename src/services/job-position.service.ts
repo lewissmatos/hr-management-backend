@@ -2,18 +2,27 @@ import { AppDataSource } from "../db-source";
 import { JobPosition } from "../entities/job-position.entity";
 import { paginate, PaginationOptions } from "../utils/paginate";
 import { JobPositionRiskLevels } from "../entities/utils/entity-utils";
-import { ILike } from "typeorm";
+import { ILike, In, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import { FilterOptions, getBooleanValueToFilter } from "./services.utils";
 
 const repo = AppDataSource.getRepository(JobPosition);
 export class JobPositionService {
-	static async getAll(filter: Partial<JobPosition> & PaginationOptions) {
-		const { page, limit, name } = filter;
+	static async getAll(filters: FilterOptions<JobPosition>) {
+		const { page, limit, name, booleanQuery, minSalary, maxSalary } = filters;
+		let isAvailableFilter = getBooleanValueToFilter(booleanQuery);
 		return await paginate(
 			repo,
 			{ page, limit },
 			{
 				where: {
 					...(name ? { name: ILike(`%${name}%`) } : {}),
+					...(isAvailableFilter !== undefined
+						? Array.isArray(isAvailableFilter)
+							? { isAvailable: In(isAvailableFilter) }
+							: { isAvailable: isAvailableFilter }
+						: {}),
+					...(minSalary ? { minSalary: MoreThanOrEqual(minSalary) } : {}),
+					...(maxSalary ? { maxSalary: LessThanOrEqual(maxSalary) } : {}),
 				},
 				order: { name: "ASC" },
 			}

@@ -5,14 +5,16 @@ import { createResponse } from "../utils/responseModel";
 export class JobPositionController {
 	static async getAll(req: Request, res: Response) {
 		try {
-			const { page, limit, name } = req.query;
+			const { page, limit, name, minSalary, maxSalary, isActive } = req.query;
 			const paginatedRes = await JobPositionService.getAll({
 				page: Number(page),
 				limit: Number(limit),
 				name: name ? String(name) : undefined,
+				booleanQuery: isActive ? String(isActive) : undefined,
+				minSalary: minSalary ? Number(minSalary) : undefined,
+				maxSalary: maxSalary ? Number(maxSalary) : undefined,
 			});
 
-			console.log(name);
 			res.json(
 				createResponse(
 					"Puestos de trabajo obtenidos exitosamente",

@@ -5,10 +5,13 @@ import { createResponse } from "../utils/responseModel";
 
 export class TrainingController {
 	static async getAll(req: Request, res: Response) {
-		const { page, limit } = req.query;
+		const { page, limit, searchParam, startDate, endDate } = req.query;
 		const paginatedResponse = await TrainingService.getAll({
 			page: Number(page),
 			limit: Number(limit),
+			searchParam: searchParam ? String(searchParam).toLowerCase() : undefined,
+			startDate: startDate ? new Date(String(startDate)) : undefined,
+			endDate: endDate ? new Date(String(endDate)) : undefined,
 		});
 		res.json(
 			createResponse(

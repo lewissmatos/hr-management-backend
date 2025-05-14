@@ -1,20 +1,37 @@
+import { ILike, MoreThanOrEqual, LessThanOrEqual } from "typeorm";
 import { AppDataSource } from "../db-source";
 import { Training } from "../entities/training.entity";
 import { TrainingLevels } from "../entities/utils/entity-utils";
-import { paginate, PaginationOptions } from "../utils/paginate";
+import { paginate } from "../utils/paginate";
+import { FilterOptions } from "./services.utils";
 
 const repo = AppDataSource.getRepository(Training);
 
 export class TrainingService {
-	static async getAll(filters: Partial<Training> & PaginationOptions) {
-		const { page, limit, ...rest } = filters;
+	static async getAll(filters: FilterOptions<Training>) {
+		const { page, limit, searchParam, startDate, endDate, ...rest } = filters;
+
+		const searchConditions =
+			searchParam == undefined
+				? []
+				: [
+						{ name: ILike(`%${searchParam}%`) },
+						{ level: ILike(`%${searchParam}%`) },
+						{ institution: ILike(`%${searchParam}%`) },
+				  ];
+
 		return await paginate(
 			repo,
 			{ page, limit },
 			{
-				where: {
-					...rest,
-				},
+				where: [
+					rest,
+					...(searchConditions as any),
+					{
+						...(startDate ? { startDate: MoreThanOrEqual(startDate) } : {}),
+						...(endDate ? { endDate: LessThanOrEqual(endDate) } : {}),
+					},
+				],
 				order: { name: "ASC" },
 			}
 		);

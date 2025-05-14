@@ -5,23 +5,33 @@ import { createResponse } from "../utils/responseModel";
 
 export class ProficiencyController {
 	static async getAll(req: Request, res: Response) {
-		const { page, limit } = req.query;
-		const paginatedRes = await ProficiencyService.getAll({
-			page: Number(page),
-			limit: Number(limit),
-		});
-		res.json(
-			createResponse(
-				"Competencias obtenidas exitosamente",
-				200,
-				paginatedRes.data,
-				{
-					page: paginatedRes.page,
-					limit: paginatedRes.limit,
-					total: paginatedRes.total,
-				}
-			)
-		);
+		const { page, limit, description, isActive } = req.query;
+		try {
+			const paginatedRes = await ProficiencyService.getAll({
+				page: Number(page) || 1,
+				limit: Number(limit) || 50,
+				description: description
+					? String(description).toLowerCase()
+					: undefined,
+				booleanQuery: isActive ? String(isActive) : undefined,
+			});
+			res.json(
+				createResponse(
+					"Competencias obtenidas exitosamente",
+					200,
+					paginatedRes.data,
+					{
+						page: paginatedRes.page,
+						limit: paginatedRes.limit,
+						total: paginatedRes.total,
+					}
+				)
+			);
+		} catch (e: any) {
+			res
+				.status(500)
+				.json(createResponse(e.message || "Error interno del servidor", 500));
+		}
 	}
 
 	static async getOne(req: Request, res: Response) {

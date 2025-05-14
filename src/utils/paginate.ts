@@ -19,7 +19,7 @@ export async function paginate<T extends GlobalEntity>(
 	pagination?: PaginationOptions,
 	more?: {
 		relations?: string[];
-		where?: FindOptionsWhere<T>;
+		where?: FindOptionsWhere<T> | FindOptionsWhere<T>[];
 		order?: FindOptionsOrder<T>;
 	}
 ): Promise<PaginationResult<T> & { data: T[] }> {

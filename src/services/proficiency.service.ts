@@ -1,14 +1,30 @@
+import { ILike, In } from "typeorm";
 import { AppDataSource } from "../db-source";
 import { Proficiency } from "../entities/proficiency.entity";
 import { paginate, PaginationOptions } from "../utils/paginate";
+import { FilterOptions, getBooleanValueToFilter } from "./services.utils";
 
 const repo = AppDataSource.getRepository(Proficiency);
 
 export class ProficiencyService {
-	static async getAll(pagination: PaginationOptions) {
-		return await paginate(repo, pagination, {
-			order: { description: "ASC" },
-		});
+	static async getAll(filters: FilterOptions<Proficiency>) {
+		const { page, limit, description, booleanQuery } = filters;
+		let isActiveFilter = getBooleanValueToFilter(booleanQuery);
+		return await paginate(
+			repo,
+			{ page, limit },
+			{
+				order: { description: "ASC" },
+				where: {
+					...(description ? { description: ILike(`%${description}%`) } : {}),
+					...(isActiveFilter !== undefined
+						? Array.isArray(isActiveFilter)
+							? { isActive: In(isActiveFilter) }
+							: { isActive: isActiveFilter }
+						: {}),
+				},
+			}
+		);
 	}
 
 	static async getOne(id: number) {

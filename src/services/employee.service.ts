@@ -1,17 +1,48 @@
+import { ILike, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 import { AppDataSource } from "../db-source";
 
 import { Employee } from "../entities/employee.entity";
 import { paginate, PaginationOptions } from "../utils/paginate";
+import { FilterOptions } from "./services.utils";
 const repo = AppDataSource.getRepository(Employee);
 
 export class EmployeeService {
-	static async getAll(filter: Partial<Employee> & PaginationOptions) {
-		const { page, limit, ...rest } = filter;
+	static async getAll(filters: FilterOptions<Employee>) {
+		const {
+			page,
+			limit,
+			searchParam,
+			startDate,
+			startSalary,
+			endSalary,
+			...rest
+		} = filters;
+
+		const searchConditions =
+			searchParam == undefined
+				? []
+				: [
+						{ cedula: ILike(`%${searchParam}%`) },
+						{ name: ILike(`%${searchParam}%`) },
+						{ department: ILike(`%${searchParam}%`) },
+						{ jobPosition: { name: ILike(`%${searchParam}%`) } },
+				  ];
 		return await paginate(
 			repo,
 			{ page, limit },
 			{
 				relations: ["jobPosition", "candidateBackground"],
+				where: [
+					rest,
+					...(searchConditions as any),
+					{
+						...(startDate ? { startDate: MoreThanOrEqual(startDate) } : {}),
+					},
+					{
+						...(startSalary ? { salary: MoreThanOrEqual(startSalary) } : {}),
+						...(endSalary ? { salary: LessThanOrEqual(endSalary) } : {}),
+					},
+				],
 				order: { name: "ASC" },
 			}
 		);
