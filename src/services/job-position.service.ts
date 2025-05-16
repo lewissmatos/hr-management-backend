@@ -8,7 +8,16 @@ import { FilterOptions, getBooleanValueToFilter } from "./services.utils";
 const repo = AppDataSource.getRepository(JobPosition);
 export class JobPositionService {
 	static async getAll(filters: FilterOptions<JobPosition>) {
-		const { page, limit, name, booleanQuery, minSalary, maxSalary } = filters;
+		const {
+			page,
+			limit,
+			name,
+			booleanQuery,
+			minSalary,
+			maxSalary,
+			riskLevels,
+			description,
+		} = filters;
 		let isAvailableFilter = getBooleanValueToFilter(booleanQuery);
 		return await paginate(
 			repo,
@@ -16,6 +25,7 @@ export class JobPositionService {
 			{
 				where: {
 					...(name ? { name: ILike(`%${name}%`) } : {}),
+					...(description ? { name: ILike(`%${description}%`) } : {}),
 					...(isAvailableFilter !== undefined
 						? Array.isArray(isAvailableFilter)
 							? { isAvailable: In(isAvailableFilter) }
@@ -23,16 +33,11 @@ export class JobPositionService {
 						: {}),
 					...(minSalary ? { minSalary: MoreThanOrEqual(minSalary) } : {}),
 					...(maxSalary ? { maxSalary: LessThanOrEqual(maxSalary) } : {}),
+					...(riskLevels ? { riskLevel: In(riskLevels) } : {}),
 				},
 				order: { name: "ASC" },
 			}
 		);
-	}
-
-	static async getAvailable(pagination: PaginationOptions) {
-		return await paginate(repo, pagination, {
-			order: { name: "ASC" },
-		});
 	}
 
 	static async getOne(id: number) {

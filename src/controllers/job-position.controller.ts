@@ -5,14 +5,25 @@ import { createResponse } from "../utils/responseModel";
 export class JobPositionController {
 	static async getAll(req: Request, res: Response) {
 		try {
-			const { page, limit, name, minSalary, maxSalary, isActive } = req.query;
+			const {
+				page,
+				limit,
+				name,
+				minSalary,
+				maxSalary,
+				riskLevels,
+				isAvailable,
+				description,
+			} = req.query;
 			const paginatedRes = await JobPositionService.getAll({
 				page: Number(page),
 				limit: Number(limit),
 				name: name ? String(name) : undefined,
-				booleanQuery: isActive ? String(isActive) : undefined,
+				description: description ? String(description) : undefined,
+				booleanQuery: isAvailable ? String(isAvailable) : undefined,
 				minSalary: minSalary ? Number(minSalary) : undefined,
 				maxSalary: maxSalary ? Number(maxSalary) : undefined,
+				riskLevels: riskLevels ? String(riskLevels).split(",") : undefined,
 			});
 
 			res.json(
@@ -34,31 +45,6 @@ export class JobPositionController {
 		}
 	}
 
-	static async getAvailable(req: Request, res: Response) {
-		try {
-			const { page, limit } = req.query;
-			const paginatedRes = await JobPositionService.getAvailable({
-				page: Number(page),
-				limit: Number(limit),
-			});
-			res.json(
-				createResponse(
-					"Puestos de trabajo disponibles obtenidos exitosamente",
-					200,
-					paginatedRes.data,
-					{
-						page: paginatedRes.page,
-						limit: paginatedRes.limit,
-						total: paginatedRes.total,
-					}
-				)
-			);
-		} catch (e: any) {
-			res
-				.status(500)
-				.json(createResponse(e.message || "Error interno del servidor", 500));
-		}
-	}
 	static async getOne(req: Request, res: Response) {
 		const { id } = req.params;
 		try {

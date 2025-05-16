@@ -32,6 +32,36 @@ export class CandidateController {
 		}
 	}
 
+	static async getByCedula(req: Request, res: Response) {
+		try {
+			const data = await CandidateService.getByCedula(
+				String(req.params.cedula)
+			);
+			res.json(createResponse("Candidato encontrado", 200, data));
+		} catch (error: any) {
+			res.status(404).json({ message: error.message });
+		}
+	}
+	static async create(req: Request, res: Response) {
+		try {
+			const data = await CandidateService.create(req.body);
+			res.status(201).json(createResponse("Candidato creado", 201, data));
+		} catch (error: any) {
+			res.status(400).json({ message: error.message });
+		}
+	}
+
+	static async checkPassword(req: Request, res: Response) {
+		try {
+			const data = await CandidateService.checkPassword(
+				req.body.cedula,
+				req.body.password
+			);
+			res.status(201).json(createResponse("Contraseña revisada", 200, data));
+		} catch (error: any) {
+			res.status(400).json({ message: error.message });
+		}
+	}
 	static async update(req: Request, res: Response) {
 		try {
 			const data = await CandidateService.update(

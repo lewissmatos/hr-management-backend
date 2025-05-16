@@ -18,6 +18,8 @@ import { Training } from "./training.entity";
 export class Candidate extends GlobalEntity {
 	@Column({ unique: true })
 	cedula: string = "";
+	@Column({ nullable: true })
+	password: string = "";
 	@Column()
 	name: string = "";
 	@ManyToOne(() => JobPosition)
@@ -29,17 +31,18 @@ export class Candidate extends GlobalEntity {
 	department: string = "";
 	@Column()
 	minExpectedSalary: number = 0.0;
-	@OneToMany(() => WorkExperience, (x) => x.candidate)
+	@OneToMany(() => WorkExperience, (x) => x.candidate, { cascade: true })
 	workExperiences!: WorkExperience[];
 	@ManyToOne(() => Employee)
 	recommendedBy!: Employee;
 	@ManyToMany(() => Language)
 	@JoinTable()
 	spokenLanguages!: Language[];
+	@ManyToMany(() => Training)
+	@JoinTable()
+	trainings!: Training[];
 	@Column()
 	isActive: boolean = true;
-	@Column()
-	password: string = "";
 	@Column()
 	isEmployee: boolean = false;
 }

@@ -8,11 +8,11 @@ export class WorkExperience extends GlobalEntity {
 	@Column()
 	company: string = "";
 	@Column()
+	position: string = "";
+	@Column({ nullable: true })
 	startDate: Date = new Date();
-	@Column()
+	@Column({ nullable: true })
 	endDate: Date = new Date();
-	@ManyToOne(() => JobPosition, (x) => x.id)
-	jobPosition!: JobPosition;
 	@ManyToOne(() => Candidate, (x) => x.workExperiences)
 	candidate!: Candidate;
 }
