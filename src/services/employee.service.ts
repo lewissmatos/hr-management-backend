@@ -16,6 +16,8 @@ export class EmployeeService {
 			endDate,
 			startSalary,
 			endSalary,
+			departmentName,
+			jobPositionName,
 			...rest
 		} = filters;
 
@@ -25,8 +27,6 @@ export class EmployeeService {
 				: [
 						{ cedula: ILike(`%${searchParam}%`) },
 						{ name: ILike(`%${searchParam}%`) },
-						{ department: ILike(`%${searchParam}%`) },
-						{ jobPosition: { name: ILike(`%${searchParam}%`) } },
 				  ];
 		return await paginate(
 			repo,
@@ -43,6 +43,11 @@ export class EmployeeService {
 					{
 						...(startSalary ? { salary: MoreThanOrEqual(startSalary) } : {}),
 						...(endSalary ? { salary: LessThanOrEqual(endSalary) } : {}),
+					},
+					{
+						...(departmentName
+							? { department: ILike(`%${departmentName}%`) }
+							: {}),
 					},
 				],
 				order: { name: "ASC" },

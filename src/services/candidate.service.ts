@@ -14,7 +14,7 @@ export class CandidateService {
 		const {
 			page,
 			limit,
-			proficiencyName,
+			proficiencyDescription,
 			trainingName,
 			languageName,
 			applyingJobPositionName,
@@ -23,6 +23,8 @@ export class CandidateService {
 			endApplyingDate,
 			startSalary,
 			endSalary,
+			department,
+			recommendedByName,
 			...rest
 		} = filters;
 
@@ -32,8 +34,6 @@ export class CandidateService {
 				: [
 						{ cedula: ILike(`%${searchParam}%`) },
 						{ name: ILike(`%${searchParam}%`) },
-						{ department: ILike(`%${searchParam}%`) },
-						{ recommendedBy: { name: ILike(`%${searchParam}%`) } },
 				  ];
 
 		return await paginate(
@@ -65,8 +65,12 @@ export class CandidateService {
 						...(endSalary ? { salary: LessThanOrEqual(endSalary) } : {}),
 					},
 					{
-						...(proficiencyName
-							? { proficiencies: { name: ILike(`%${proficiencyName}%`) } }
+						...(proficiencyDescription
+							? {
+									proficiencies: {
+										description: ILike(`%${proficiencyDescription}%`),
+									},
+							  }
 							: {}),
 					},
 					{
@@ -84,6 +88,24 @@ export class CandidateService {
 							? {
 									applyingJobPosition: {
 										name: ILike(`%${applyingJobPositionName}%`),
+									},
+							  }
+							: {}),
+					},
+					{
+						...(department
+							? {
+									applyingJobPosition: {
+										department: ILike(`%${department}%`),
+									},
+							  }
+							: {}),
+					},
+					{
+						...(recommendedByName
+							? {
+									recommendedBy: {
+										name: ILike(`%${recommendedByName}%`),
 									},
 							  }
 							: {}),

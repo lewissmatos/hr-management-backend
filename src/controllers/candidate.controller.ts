@@ -17,11 +17,13 @@ export class CandidateController {
 				endApplyingDate,
 				startSalary,
 				endSalary,
+				department,
+				recommendedBy,
 			} = req.query;
 			const paginatedRes = await CandidateService.getAll({
 				page: Number(page),
 				limit: Number(limit),
-				proficiencyName: proficiency ? String(proficiency) : undefined,
+				proficiencyDescription: proficiency ? String(proficiency) : undefined,
 				trainingName: training ? String(training) : undefined,
 				languageName: language ? String(language) : undefined,
 				applyingJobPositionName: applyingJobPosition
@@ -38,6 +40,8 @@ export class CandidateController {
 					: undefined,
 				startSalary: startSalary ? Number(startSalary) : undefined,
 				endSalary: endSalary ? Number(endSalary) : undefined,
+				department: department ? String(department) : undefined,
+				recommendedByName: recommendedBy ? String(recommendedBy) : undefined,
 			});
 			res.json(
 				createResponse("Capacitación encontrada", 200, paginatedRes.data, {

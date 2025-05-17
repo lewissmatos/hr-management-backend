@@ -13,6 +13,8 @@ export class EmployeeController {
 				searchParam,
 				startSalary,
 				endSalary,
+				department,
+				jobPosition,
 			} = req.query;
 			const paginatedRes = await EmployeeService.getAll({
 				page: Number(page),
@@ -23,6 +25,12 @@ export class EmployeeController {
 				endSalary: endSalary ? Number(endSalary) : undefined,
 				searchParam: searchParam
 					? String(searchParam).toLowerCase()
+					: undefined,
+				departmentName: department
+					? String(department).toLowerCase()
+					: undefined,
+				jobPositionName: jobPosition
+					? String(jobPosition).toLowerCase()
 					: undefined,
 			});
 			res.json(
