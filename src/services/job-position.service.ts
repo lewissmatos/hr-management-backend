@@ -77,6 +77,7 @@ export class JobPositionService {
 		if (!jobPosition) throw new Error("Puesto de trabajo no encontrado");
 
 		await AppDataSource.getRepository(JobPosition).update(id, {
+			...jobPosition,
 			isAvailable: !jobPosition.isAvailable,
 		});
 		return { ...jobPosition, isAvailable: false };

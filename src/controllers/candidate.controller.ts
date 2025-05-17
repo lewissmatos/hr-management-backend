@@ -5,11 +5,39 @@ import { createResponse } from "../utils/responseModel";
 export class CandidateController {
 	static async getAll(req: Request, res: Response) {
 		try {
-			const { page, limit, name } = req.query;
+			const {
+				page,
+				limit,
+				proficiency,
+				training,
+				language,
+				applyingJobPosition,
+				searchParam,
+				startApplyingDate,
+				endApplyingDate,
+				startSalary,
+				endSalary,
+			} = req.query;
 			const paginatedRes = await CandidateService.getAll({
 				page: Number(page),
 				limit: Number(limit),
-				name: name ? String(name) : undefined,
+				proficiencyName: proficiency ? String(proficiency) : undefined,
+				trainingName: training ? String(training) : undefined,
+				languageName: language ? String(language) : undefined,
+				applyingJobPositionName: applyingJobPosition
+					? String(applyingJobPosition)
+					: undefined,
+				searchParam: searchParam
+					? String(searchParam).toLowerCase()
+					: undefined,
+				startApplyingDate: startApplyingDate
+					? new Date(String(startApplyingDate))
+					: undefined,
+				endApplyingDate: endApplyingDate
+					? new Date(String(endApplyingDate))
+					: undefined,
+				startSalary: startSalary ? Number(startSalary) : undefined,
+				endSalary: endSalary ? Number(endSalary) : undefined,
 			});
 			res.json(
 				createResponse("Capacitación encontrada", 200, paginatedRes.data, {
@@ -37,7 +65,7 @@ export class CandidateController {
 			const data = await CandidateService.getByCedula(
 				String(req.params.cedula)
 			);
-			res.json(createResponse("Candidato encontrado", 200, data));
+			res.json(createResponse(data.message, 200, data.candidate));
 		} catch (error: any) {
 			res.status(404).json({ message: error.message });
 		}
@@ -76,7 +104,10 @@ export class CandidateController {
 
 	static async makeEmployee(req: Request, res: Response) {
 		try {
-			const data = await CandidateService.makeEmployee(Number(req.params.id));
+			const data = await CandidateService.makeEmployee(
+				Number(req.params.id),
+				Number(req.body.salary)
+			);
 			res.json(createResponse("Candidato convertido en empleado", 200, data));
 		} catch (error: any) {
 			res.status(400).json({ message: error.message });

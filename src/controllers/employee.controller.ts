@@ -5,12 +5,20 @@ import { createResponse } from "../utils/responseModel";
 export class EmployeeController {
 	static async getAll(req: Request, res: Response) {
 		try {
-			const { page, limit, startDate, searchParam, startSalary, endSalary } =
-				req.query;
+			const {
+				page,
+				limit,
+				startDate,
+				endDate,
+				searchParam,
+				startSalary,
+				endSalary,
+			} = req.query;
 			const paginatedRes = await EmployeeService.getAll({
 				page: Number(page),
 				limit: Number(limit),
 				startDate: startDate ? new Date(String(startDate)) : undefined,
+				endDate: endDate ? new Date(String(endDate)) : undefined,
 				startSalary: startSalary ? Number(startSalary) : undefined,
 				endSalary: endSalary ? Number(endSalary) : undefined,
 				searchParam: searchParam

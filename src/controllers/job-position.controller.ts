@@ -93,7 +93,9 @@ export class JobPositionController {
 		const { id } = req.params;
 		try {
 			await JobPositionService.toggleAvailability(Number(id));
-			res.json(createResponse("Puesto de trabajo eliminado exitosamente", 200));
+			res.json(
+				createResponse("Puesto de trabajo actualizado exitosamente", 200)
+			);
 		} catch (e: any) {
 			res
 				.status(404)

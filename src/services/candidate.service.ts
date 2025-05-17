@@ -5,11 +5,37 @@ import { Employee } from "../entities/employee.entity";
 import { paginate, PaginationOptions } from "../utils/paginate";
 import { EmployeeService } from "./employee.service";
 import bcrypt from "bcrypt";
+import { FilterOptions } from "./services.utils";
+import { ILike, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 const repo = AppDataSource.getRepository(Candidate);
 
 export class CandidateService {
-	static async getAll(filter: Partial<Candidate> & PaginationOptions) {
-		const { page, limit, ...rest } = filter;
+	static async getAll(filters: FilterOptions<Candidate>) {
+		const {
+			page,
+			limit,
+			proficiencyName,
+			trainingName,
+			languageName,
+			applyingJobPositionName,
+			searchParam,
+			startApplyingDate,
+			endApplyingDate,
+			startSalary,
+			endSalary,
+			...rest
+		} = filters;
+
+		const searchConditions =
+			searchParam == undefined
+				? []
+				: [
+						{ cedula: ILike(`%${searchParam}%`) },
+						{ name: ILike(`%${searchParam}%`) },
+						{ department: ILike(`%${searchParam}%`) },
+						{ recommendedBy: { name: ILike(`%${searchParam}%`) } },
+				  ];
+
 		return await paginate(
 			repo,
 			{ page, limit },
@@ -23,9 +49,46 @@ export class CandidateService {
 					"trainings",
 				],
 				order: { name: "ASC" },
-				where: {
-					...rest,
-				},
+				where: [
+					rest,
+					...(searchConditions as any),
+					{
+						...(startApplyingDate
+							? { createdAt: MoreThanOrEqual(startApplyingDate) }
+							: {}),
+						...(endApplyingDate
+							? { createdAt: LessThanOrEqual(endApplyingDate) }
+							: {}),
+					},
+					{
+						...(startSalary ? { salary: MoreThanOrEqual(startSalary) } : {}),
+						...(endSalary ? { salary: LessThanOrEqual(endSalary) } : {}),
+					},
+					{
+						...(proficiencyName
+							? { proficiencies: { name: ILike(`%${proficiencyName}%`) } }
+							: {}),
+					},
+					{
+						...(trainingName
+							? { trainings: { name: ILike(`%${trainingName}%`) } }
+							: {}),
+					},
+					{
+						...(languageName
+							? { spokenLanguages: { name: ILike(`%${languageName}%`) } }
+							: {}),
+					},
+					{
+						...(applyingJobPositionName
+							? {
+									applyingJobPosition: {
+										name: ILike(`%${applyingJobPositionName}%`),
+									},
+							  }
+							: {}),
+					},
+				],
 			}
 		);
 	}
@@ -58,8 +121,21 @@ export class CandidateService {
 				"trainings",
 			],
 		});
-		if (!candidate) throw new Error("Candidato no encontrado");
-		return candidate;
+
+		let message = "";
+		if (!candidate) {
+			message = "NO_MATTER";
+		} else if (candidate.isEmployee) {
+			message = "DENY";
+		} else if (!candidate.isActive) {
+			message = "DENY";
+		} else {
+			message = "PENDING";
+		}
+		return {
+			candidate,
+			message,
+		};
 	}
 
 	static async checkPassword(cedula: string, password: string) {
@@ -75,6 +151,8 @@ export class CandidateService {
 			],
 		});
 		if (!candidate) throw new Error("Candidato no encontrado");
+		if (candidate.isEmployee || !candidate.isActive)
+			throw new Error("Candidato ya es empleado");
 		const result = await bcrypt.compare(password, candidate.password);
 		return result ? candidate : null;
 	}
@@ -98,28 +176,32 @@ export class CandidateService {
 	static async update(id: number, data: Partial<Candidate>) {
 		const candidate = await this.getOne(id);
 		if (!candidate) throw new Error("Candidato no encontrado");
-
+		console.log(candidate);
+		if (candidate.isEmployee || !candidate.isActive)
+			throw new Error("Candidato ya es empleado");
 		Object.assign(candidate, data);
-		//Check why it's not saving workExperiences
 		return await repo.save(candidate);
 	}
 
-	static async makeEmployee(id: number) {
+	static async makeEmployee(id: number, salary?: number) {
 		const candidate = await this.getOne(id);
 		if (!candidate) throw new Error("Candidato no encontrado");
 
-		await repo.update(id, {
+		Object.assign(candidate, {
+			...candidate,
 			isEmployee: true,
 			isActive: false,
 		});
+
+		await repo.save(candidate);
 
 		await EmployeeService.create({
 			cedula: candidate.cedula,
 			name: candidate.name,
 			startDate: new Date(),
 			jobPosition: candidate.applyingJobPosition,
-			department: candidate.department,
-			salary: candidate.minExpectedSalary,
+			department: candidate.applyingJobPosition.department,
+			salary: salary || candidate.minExpectedSalary,
 			candidateBackground: candidate,
 		} as Employee);
 

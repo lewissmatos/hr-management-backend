@@ -9,7 +9,7 @@ router.get("/:cedula/cedula", CandidateController.getByCedula);
 router.post("/check-password", CandidateController.checkPassword);
 router.post("/", CandidateController.create);
 router.put("/:id", CandidateController.update);
-// router.use(authenticateJWT);
+router.use(authenticateJWT);
 router.get("/", CandidateController.getAll);
 router.put("/:id/make-employee", CandidateController.makeEmployee);
 

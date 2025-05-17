@@ -13,6 +13,7 @@ export class EmployeeService {
 			limit,
 			searchParam,
 			startDate,
+			endDate,
 			startSalary,
 			endSalary,
 			...rest
@@ -37,6 +38,7 @@ export class EmployeeService {
 					...(searchConditions as any),
 					{
 						...(startDate ? { startDate: MoreThanOrEqual(startDate) } : {}),
+						...(endDate ? { startDate: LessThanOrEqual(endDate) } : {}),
 					},
 					{
 						...(startSalary ? { salary: MoreThanOrEqual(startSalary) } : {}),
@@ -75,11 +77,14 @@ export class EmployeeService {
 		}
 
 		//Check if the candidate background is already assigned
-		const candidateBackgroundExists = await repo.findOneBy({
-			candidateBackground: data.candidateBackground,
-		});
-		if (candidateBackgroundExists && candidateBackgroundExists.id !== id) {
-			throw new Error("El fondo de candidato ya está asignado");
+		if (data.candidateBackground?.id) {
+			const employeeWithBackground = await repo.findOneBy({
+				candidateBackground: { id: data.candidateBackground.id },
+			});
+
+			if (employeeWithBackground && employeeWithBackground.id !== id) {
+				throw new Error("El empleado ya tiene un candidato asignado");
+			}
 		}
 
 		Object.assign(employee, data);
