@@ -19,6 +19,7 @@ export class CandidateController {
 				endSalary,
 				department,
 				recommendedBy,
+				isEmployee,
 			} = req.query;
 			const paginatedRes = await CandidateService.getAll({
 				page: Number(page),
@@ -42,6 +43,7 @@ export class CandidateController {
 				endSalary: endSalary ? Number(endSalary) : undefined,
 				department: department ? String(department) : undefined,
 				recommendedByName: recommendedBy ? String(recommendedBy) : undefined,
+				booleanQuery: isEmployee ? String(isEmployee) : undefined,
 			});
 			res.json(
 				createResponse("Capacitación encontrada", 200, paginatedRes.data, {
@@ -59,6 +61,23 @@ export class CandidateController {
 		try {
 			const data = await CandidateService.getOne(Number(req.params.id));
 			res.json(createResponse("Candidato encontrado", 200, data));
+		} catch (error: any) {
+			res.status(404).json({ message: error.message });
+		}
+	}
+
+	static async getByJobPosition(req: Request, res: Response) {
+		try {
+			const paginatedRes = await CandidateService.getByJobPosition(
+				Number(req.params.jobPositionId)
+			);
+			res.json(
+				createResponse("Candidatos encontrados", 200, paginatedRes.data, {
+					page: paginatedRes.page,
+					limit: paginatedRes.limit,
+					total: paginatedRes.total,
+				})
+			);
 		} catch (error: any) {
 			res.status(404).json({ message: error.message });
 		}

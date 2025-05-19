@@ -5,6 +5,10 @@ import { CandidateController } from "../controllers/candidate.controller";
 
 const router = Router();
 router.get("/:id", CandidateController.getOne);
+router.get(
+	"/job-position/:jobPositionId",
+	CandidateController.getByJobPosition
+);
 router.get("/:cedula/cedula", CandidateController.getByCedula);
 router.post("/check-password", CandidateController.checkPassword);
 router.post("/", CandidateController.create);

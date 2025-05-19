@@ -5,8 +5,8 @@ import { Employee } from "../entities/employee.entity";
 import { paginate, PaginationOptions } from "../utils/paginate";
 import { EmployeeService } from "./employee.service";
 import bcrypt from "bcrypt";
-import { FilterOptions } from "./services.utils";
-import { ILike, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import { FilterOptions, getBooleanValueToFilter } from "./services.utils";
+import { ILike, In, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 const repo = AppDataSource.getRepository(Candidate);
 
 export class CandidateService {
@@ -25,8 +25,10 @@ export class CandidateService {
 			endSalary,
 			department,
 			recommendedByName,
-			...rest
+			booleanQuery,
 		} = filters;
+
+		let isEmployeeFilter = getBooleanValueToFilter(booleanQuery);
 
 		const searchConditions =
 			searchParam == undefined
@@ -50,7 +52,6 @@ export class CandidateService {
 				],
 				order: { name: "ASC" },
 				where: [
-					rest,
 					...(searchConditions as any),
 					{
 						...(startApplyingDate
@@ -110,9 +111,47 @@ export class CandidateService {
 							  }
 							: {}),
 					},
+					{
+						...(isEmployeeFilter !== undefined
+							? Array.isArray(isEmployeeFilter)
+								? { isEmployee: In(isEmployeeFilter) }
+								: { isEmployee: isEmployeeFilter }
+							: {}),
+					},
 				],
 			}
 		);
+	}
+
+	static async getByJobPosition(jobPositionId: number) {
+		const candidates = await paginate(repo, {} as any, {
+			relations: [
+				"applyingJobPosition",
+				"proficiencies",
+				"workExperiences",
+				"recommendedBy",
+				"spokenLanguages",
+				"trainings",
+			],
+			order: { name: "ASC" },
+			where: {
+				applyingJobPosition: { id: jobPositionId },
+				isEmployee: false,
+			},
+		});
+
+		repo.find({
+			where: { applyingJobPosition: { id: jobPositionId }, isEmployee: false },
+			relations: [
+				"applyingJobPosition",
+				"proficiencies",
+				"workExperiences",
+				"recommendedBy",
+				"spokenLanguages",
+				"trainings",
+			],
+		});
+		return candidates;
 	}
 
 	static async getOne(id: number) {
