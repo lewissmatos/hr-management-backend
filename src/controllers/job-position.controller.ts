@@ -104,4 +104,24 @@ export class JobPositionController {
 				);
 		}
 	}
+
+	static async getCandidatesCount(req: Request, res: Response) {
+		const { id } = req.params;
+		try {
+			const data = await JobPositionService.getCandidatesCount(Number(id));
+			res.json(
+				createResponse(
+					"Cantidad de candidatos obtenida exitosamente",
+					200,
+					data
+				)
+			);
+		} catch (e: any) {
+			res
+				.status(404)
+				.json(
+					createResponse(e.message || "Puesto de trabajo no encontrado", 404)
+				);
+		}
+	}
 }

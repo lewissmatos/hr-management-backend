@@ -13,6 +13,8 @@ export class WorkExperience extends GlobalEntity {
 	startDate: Date = new Date();
 	@Column({ nullable: true })
 	endDate: Date = new Date();
+	@Column({ nullable: true })
+	salary: number = 0.0;
 	@ManyToOne(() => Candidate, (x) => x.workExperiences)
 	candidate!: Candidate;
 }

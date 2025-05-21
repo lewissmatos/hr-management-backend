@@ -221,9 +221,9 @@ export class CandidateService {
 	static async create(data: Partial<Candidate>) {
 		const exists = await repo.findOneBy({ cedula: data.cedula });
 		if (exists) throw new Error("El candidato ya existe");
-		if (!data.applyingJobPosition)
-			throw new Error("El candidato no tiene puesto de trabajo");
-		if (!data.password) throw new Error("El candidato no tiene contraseña");
+
+		if (!data.password) throw new Error("Debe proveer una contraseña");
+
 		const { password } = data;
 		const hashedPass = await bcrypt.hash(password, 10);
 

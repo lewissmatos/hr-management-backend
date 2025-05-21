@@ -6,6 +6,7 @@ import { JobPositionController } from "../controllers/job-position.controller";
 const router = Router();
 // router.use(authenticateJWT);
 
+router.get("/:id/candidates-count", JobPositionController.getCandidatesCount);
 router.get("/", JobPositionController.getAll);
 router.get("/:id", JobPositionController.getOne);
 router.post("/", JobPositionController.create);

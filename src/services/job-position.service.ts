@@ -4,8 +4,10 @@ import { paginate, PaginationOptions } from "../utils/paginate";
 import { JobPositionRiskLevels } from "../entities/utils/entity-utils";
 import { ILike, In, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 import { FilterOptions, getBooleanValueToFilter } from "./services.utils";
+import { Candidate } from "../entities/candidate.entity";
 
 const repo = AppDataSource.getRepository(JobPosition);
+const candidatesRepo = AppDataSource.getRepository(Candidate);
 export class JobPositionService {
 	static async getAll(filters: FilterOptions<JobPosition>) {
 		const {
@@ -48,6 +50,16 @@ export class JobPositionService {
 		return jobPosition;
 	}
 
+	static async getCandidatesCount(id: number) {
+		const candidatesCount = await candidatesRepo.count({
+			where: {
+				applyingJobPosition: { id },
+				isEmployee: false,
+				isActive: true,
+			},
+		});
+		return candidatesCount;
+	}
 	static async create(data: Partial<JobPosition>) {
 		const exists = await AppDataSource.getRepository(JobPosition).findOneBy({
 			name: data.name,
