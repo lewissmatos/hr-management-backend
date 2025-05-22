@@ -45,6 +45,19 @@ export class EmployeeController {
 		}
 	}
 
+	static async getToExport(req: Request, res: Response) {
+		try {
+			const { startDate, endDate } = req.query;
+			const data = await EmployeeService.getToExport({
+				startDate: startDate ? new Date(String(startDate)) : new Date(),
+				endDate: endDate ? new Date(String(endDate)) : new Date(),
+			});
+			res.json(createResponse("Empleados encontrado", 200, data));
+		} catch (error: any) {
+			res.status(500).json({ message: error.message });
+		}
+	}
+
 	static async getOne(req: Request, res: Response) {
 		try {
 			const data = await EmployeeService.getOne(Number(req.params.id));

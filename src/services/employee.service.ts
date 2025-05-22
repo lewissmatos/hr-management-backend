@@ -1,4 +1,4 @@
-import { ILike, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import { ILike, LessThanOrEqual, MoreThanOrEqual, Between } from "typeorm";
 import { AppDataSource } from "../db-source";
 
 import { Employee } from "../entities/employee.entity";
@@ -53,6 +53,24 @@ export class EmployeeService {
 				order: { name: "ASC" },
 			}
 		);
+	}
+
+	static async getToExport(
+		{
+			startDate,
+			endDate,
+		}: {
+			startDate: Date;
+			endDate: Date;
+		} = { startDate: new Date(), endDate: new Date() }
+	) {
+		return await repo.find({
+			relations: ["jobPosition", "candidateBackground"],
+			where: {
+				startDate: Between(startDate, endDate),
+			},
+			order: { name: "ASC" },
+		});
 	}
 
 	static async getOne(id: number) {

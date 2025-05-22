@@ -6,6 +6,7 @@ import { EmployeeController } from "../controllers/employee.controller";
 const router = Router();
 router.get("/", EmployeeController.getAll);
 router.use(authenticateJWT);
+router.get("/export", EmployeeController.getToExport);
 router.get("/:id", EmployeeController.getOne);
 router.post("/", EmployeeController.create);
 router.put("/:id", EmployeeController.update);
